@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Video Downloader</title>
+    <script>
+        function downloadVideo(event) {
+            event.preventDefault();
+
+            const video_url = document.getElementById("video_url").value;
+
+            fetch("/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `video_url=${encodeURIComponent(video_url)}`
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                const link = document.createElement("a");
+                link.href = data.video_url;
+                link.download = `${data.username}_${data.date}.mp4`;
+                link.style.display = "none";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Twitter Video Downloader</h1>
+    <form onsubmit="downloadVideo(event)">
+        <label for="video_url">Enter video URL:</label><br>
+        <input type="text" id="video_url" name="video_url"><br>
+        <input type="submit" value="Download Video">
+    </form>
+</body>
+</html>
